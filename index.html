@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Chamber Finder (최적 항온항습기 검색기)</title>
+    <style>
+        /* --- 기본 스타일 --- */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* 상단 정렬 */
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* --- 컨테이너 카드 --- */
+        .container {
+            width: 100%;
+            max-width: 650px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.07);
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+            margin-top: 20px;
+        }
+
+        /* --- 헤더 (제목) --- */
+        header {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            padding: 24px;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 1.6rem;
+            font-weight: 600;
+        }
+
+        /* --- 메인 콘텐츠 (입력 + 결과) --- */
+        main {
+            padding: 30px;
+        }
+
+        /* --- 입력 섹션 --- */
+        .input-section h2 {
+            font-size: 1.2rem;
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 16px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        .input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .input-field label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+        .input-field input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            text-align: right;
+            transition: all 0.2s ease;
+        }
+        .input-field input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.15);
+        }
+
+        /* --- 검색 버튼 --- */
+        .search-button {
+            width: 100%;
+            padding: 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+        .search-button:hover {
+            background-color: #0056b3;
+        }
+        .search-button:active {
+            transform: translateY(1px);
+        }
+
+        /* --- 결과 섹션 --- */
+        #result-area {
+            margin-top: 30px;
+            border-top: 2px solid #eee;
+            padding-top: 20px;
+            display: none; /* 기본적으로 숨김 */
+        }
+        .result-report h3 {
+            margin-top: 0;
+            margin-bottom: 16px;
+            font-size: 1.2rem;
+            color: #0056b3;
+            text-align: center;
+        }
+        .result-report hr {
+            border: 0;
+            border-top: 1px solid #ddd;
+            margin: 20px 0;
+        }
+        .result-list {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 20px;
+        }
+        .result-list h4 {
+            margin: 0 0 12px 0;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+        }
+        .result-list.pass h4 { color: #28a745; }
+        .result-list.fail h4 { color: #dc3545; }
+        
+        .result-list li {
+            padding: 12px 15px;
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.2s ease;
+        }
+        .result-list li:hover {
+            background-color: #f9f9f9;
+        }
+        .result-list li .fit-count {
+            font-size: 0.9rem;
+            color: #007bff;
+            font-weight: 600;
+            white-space: nowrap;
+            margin-left: 10px;
+        }
+        .result-list li .reason {
+            font-size: 0.9rem;
+            color: #777;
+            margin-left: 10px;
+            font-weight: normal;
+            text-align: right;
+        }
+        .no-result {
+            text-align: center;
+            color: #777;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Smart Chamber Finder</h1>
+        </header>
+
+        <main>
+            <section class="input-section">
+                <h2>시료 크기를 입력하세요 (mm)</h2>
+                <div class="input-group">
+                    <div class="input-field">
+                        <label for="sample-w">가로 (W)</label>
+                        <input type="number" id="sample-w" placeholder="예: 300">
+                    </div>
+                    <div class="input-field">
+                        <label for="sample-d">깊이 (D)</label>
+                        <input type="number" id="sample-d" placeholder="예: 400">
+                    </div>
+                    <div class="input-field">
+                        <label for="sample-h">높이 (H)</label>
+                        <input type="number" id="sample-h" placeholder="예: 500">
+                    </div>
+                </div>
+                <button id="search-btn" class="search-button">적합 장비 검색하기</button>
+            </section>
+
+            <section id="result-area"></section>
+        </main>
+    </div>
+
+    <script src="script.js" defer></script>
+</body>
+</html>
