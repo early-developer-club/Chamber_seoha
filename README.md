@@ -1,5 +1,7 @@
 # 프로젝트: Smart Chamber Finder (최적 항온항습기 검색기)
 
+배포 주소 : https://neon-lamington-cbed2b.netlify.app/
+
 ## 1. 프로젝트 소개
 
 **Smart Chamber Finder**는 사용자가 원하는 시료(샘플)의 크기를 입력하면, 회사 보유 항온항습기 중 가장 적합한 장비를 찾아주는 웹 애플리케이션입니다.
